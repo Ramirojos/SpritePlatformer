@@ -1,5 +1,5 @@
-2D Sprite Platformer.
-https://github.com/Ramirojos/SpritePlatformer/tree/master
+## 2D Sprite Platformer
+
 Small platformer using 2D sprites with Unreal engine. THe objective is to practice and get confortable with Unreal Engine.
 
 ### TODOS:
