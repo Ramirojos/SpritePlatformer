@@ -20,35 +20,21 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UFUNCTION()
-	void OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
+	virtual void OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
-		const FHitResult& SweepResult);
+		const FHitResult& SweepResult) ;
 
 protected:
-	virtual void BeginPlay() override;
-
-
-
-	//variables to set sin movement of the pickup
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
-	float Amplitude;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
-	float TimeConstant;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	float RunningTime;
-
-	UFUNCTION(BlueprintPure)
-	float ItemFloatingMovement();
+	virtual void BeginPlay() override;	
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
-	UPaperFlipbookComponent* PickupFlipBookComponent;
-	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	UCapsuleComponent* PickupCapsule;
 private:
 	
-
+	UPROPERTY(VisibleAnywhere, Category = Animation)
+	UPaperFlipbookComponent* PickupFlipBookComponent;
+	
 
 };
+
+

@@ -5,21 +5,30 @@
 #include "GameState/PlatformerGameState.h"
 
 
-APlatformerGameMode::APlatformerGameMode():
-CrystalsCount{0},
-	PlayerHealt{3}
-{
-	
-}
+APlatformerGameMode::APlatformerGameMode()
+	:CrystalsCount{0},
+	PlayerHealth{3}
+{}
 
 int32 APlatformerGameMode::GetCrystals() const
 {
+	
 	return CrystalsCount;
 }
 
 void APlatformerGameMode::SetCrystals(int32 newCrystals)
 {
 	CrystalsCount = newCrystals;
+}
+
+int32 APlatformerGameMode::GetHealth() const
+{
+	return PlayerHealth;
+}
+
+void APlatformerGameMode::SetHealth(int32 newHealth)
+{
+	PlayerHealth = newHealth;
 }
 
 void APlatformerGameMode::StartPlay()

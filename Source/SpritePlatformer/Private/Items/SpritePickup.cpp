@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Items/SpritePickup.h"
+#include "Interfaces/PickupInterface.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "PaperFlipbookComponent.h"
 
 // Sets default values
 ASpritePickup::ASpritePickup()
-	:Amplitude{0.25f},
-	TimeConstant {5.f}
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -17,14 +17,8 @@ ASpritePickup::ASpritePickup()
 	SetRootComponent(PickupCapsule);
 	PickupCapsule->SetCapsuleHalfHeight(8.0f);
 	PickupCapsule->SetCapsuleRadius(8.0f);
-	PickupCapsule->SetGenerateOverlapEvents(true);
-
-	//setup the responses to colision with component
-	PickupCapsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	PickupCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
-	PickupCapsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	PickupCapsule->OnComponentBeginOverlap.AddDynamic(this, &ASpritePickup::OnBeginOverlapComponentEvent);
-
+	
+	//Sprite setup
 	PickupFlipBookComponent = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("anim"));
 	PickupFlipBookComponent-> SetupAttachment(PickupCapsule);
 
@@ -34,34 +28,33 @@ ASpritePickup::ASpritePickup()
 void ASpritePickup::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	//we want the capsule PickupCapsule constructed before we setup the collision properties
+	PickupCapsule->SetGenerateOverlapEvents(true);
+
+	//setup the responses to colision with component
+	//PickupCapsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	//PickupCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
+	//PickupCapsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	PickupCapsule->OnComponentBeginOverlap.AddDynamic(this, &ASpritePickup::OnBeginOverlapComponentEvent);
 }
 
-
-//sets sin movement of the item
-float ASpritePickup::ItemFloatingMovement()
-{
-	return Amplitude * FMath::Sin(RunningTime * TimeConstant);
-}
 
 void ASpritePickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
-	const FHitResult& SweepResult) 
+	const FHitResult& SweepResult)
 {
+	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
+	if (PickupInterface) {
+		PickupInterface->SetOverlappingItem(this);
+		Destroy();
 
-	//if(!Cast<ACharacter>(OtherActor)) return;
-	if (OtherActor == nullptr) {
-		
-		return;
 	}
-
-	Destroy();
 }
+
  void ASpritePickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	RunningTime += DeltaTime;
-	ItemFloatingMovement();
-
 }
+
 

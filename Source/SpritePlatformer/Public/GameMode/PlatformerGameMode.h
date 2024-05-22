@@ -20,11 +20,19 @@ public:
 
 	virtual ~APlatformerGameMode() = default;
 
-	UFUNCTION(BlueprintPure, Category = "Coins")
+	UFUNCTION(BlueprintPure, Category = "Crystals")
 	virtual int32 GetCrystals() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Coins")
+	UFUNCTION(BlueprintCallable, Category = "Crystals")
 	virtual void SetCrystals(int32 newCrystals);
+
+
+	UFUNCTION(BlueprintPure, Category = "Health")
+	virtual int32 GetHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	virtual void SetHealth(int32 newHealth);
+
 
 	virtual void StartPlay();
 
@@ -34,5 +42,5 @@ private:
 	int32 CrystalsCount;
 
 	UPROPERTY()
-	int32 PlayerHealt;
+	int32 PlayerHealth;
 };
