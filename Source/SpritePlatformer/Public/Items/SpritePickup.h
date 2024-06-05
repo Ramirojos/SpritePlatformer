@@ -31,6 +31,7 @@ protected:
 	UCapsuleComponent* PickupCapsule;
 private:
 	
+	//flipbook for the pickup children
 	UPROPERTY(VisibleAnywhere, Category = Animation)
 	UPaperFlipbookComponent* PickupFlipBookComponent;
 	

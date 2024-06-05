@@ -6,7 +6,7 @@
 UAttributesComponent::UAttributesComponent():
 	Health{1},
 	MaxHealth{3},
-	Points{0}
+	Points{3}
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -19,6 +19,8 @@ void UAttributesComponent::BeginPlay()
 void UAttributesComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
+	
 	IsAlive();
 }
 
@@ -29,10 +31,8 @@ void UAttributesComponent::RecieveDamage(int32 Damage)
 	Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth);
 }
 
-//alvide true/alive false
-bool UAttributesComponent::IsAlive()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Is alive clled"));
+//we check every tick if the healt is health is >0
+bool UAttributesComponent::IsAlive(){
 	if (Health > 0) 
 	{
 		return true;
@@ -52,10 +52,5 @@ void UAttributesComponent::AddHealth(int32 HealthtoAdd)
 void UAttributesComponent::AddPoints(int32 PointstoAdd)
 {
 	Points += PointstoAdd;
-}
-
-void UAttributesComponent::TakeDamage(int32 DamageTaken)
-{
-	Health -= DamageTaken;
 }
 

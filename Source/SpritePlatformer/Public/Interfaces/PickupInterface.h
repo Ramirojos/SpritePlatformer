@@ -21,10 +21,8 @@ class SPRITEPLATFORMER_API IPickupInterface
 	GENERATED_BODY()
 
 public:
-
-	virtual void SetOverlappingItem(class ASpritePickup* Item);
-			
+		
 	virtual void SetHealth(class AHealthPickup* HealthPickup);
-	virtual void AddPoints(class APointsPickup* PointsPickup);
+	virtual void IncrementPoints(class APointsPickup* PointsPickup);
 	
 };

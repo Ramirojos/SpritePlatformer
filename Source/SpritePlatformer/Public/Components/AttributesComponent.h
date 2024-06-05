@@ -16,13 +16,14 @@ public:
 
 	UAttributesComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	void RecieveDamage(int32 Damage);
 	bool IsAlive();
 
+	//add to current value
 	void AddHealth(int32 HealthtoAdd);
 	void AddPoints(int32 PointstoAdd);
-	void TakeDamage(int32 DamageTaken);
-	
+
 	FORCEINLINE int32 GetHealth() const{return Health;};
 	FORCEINLINE int32 GetPoints() const {return Points;};
 

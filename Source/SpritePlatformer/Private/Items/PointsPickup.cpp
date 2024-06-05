@@ -16,7 +16,7 @@ void APointsPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlapped
 	//PlayerCharacter
 	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
 	if (PickupInterface) {
-		PickupInterface->AddPoints(this);
+		PickupInterface->IncrementPoints(this);
 		
 		Destroy();
 	}

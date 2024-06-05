@@ -5,15 +5,15 @@
 
 // Add default functionality here for any IPickupInterface functions that are not pure virtual.
 
-void IPickupInterface::SetOverlappingItem(ASpritePickup* item)
+/*void IPickupInterface::SetOverlappingItem(ASpritePickup* item)
 {
-}
+}*/
 
 void IPickupInterface::SetHealth(AHealthPickup* HealthPickup)
 {
 }
 
-void IPickupInterface::AddPoints(APointsPickup* PointsPickup)
+void IPickupInterface::IncrementPoints(APointsPickup* PointsPickup)
 {
 }
 

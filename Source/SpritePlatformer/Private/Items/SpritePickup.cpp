@@ -22,7 +22,6 @@ ASpritePickup::ASpritePickup()
 	PickupFlipBookComponent = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("anim"));
 	PickupFlipBookComponent-> SetupAttachment(PickupCapsule);
 
-
 }	
 
 void ASpritePickup::BeginPlay()
@@ -31,26 +30,14 @@ void ASpritePickup::BeginPlay()
 
 	//we want the capsule PickupCapsule constructed before we setup the collision properties
 	PickupCapsule->SetGenerateOverlapEvents(true);
-
-	//setup the responses to colision with component
-	//PickupCapsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	//PickupCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
-	//PickupCapsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	PickupCapsule->OnComponentBeginOverlap.AddDynamic(this, &ASpritePickup::OnBeginOverlapComponentEvent);
+	PickupCapsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &ASpritePickup::OnBeginOverlapComponentEvent);
 }
 
 
 void ASpritePickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 	const FHitResult& SweepResult)
-{
-	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
-	if (PickupInterface) {
-		PickupInterface->SetOverlappingItem(this);
-		Destroy();
-
-	}
-}
+{}
 
  void ASpritePickup::Tick(float DeltaTime)
 {
