@@ -2,9 +2,9 @@
 
 #include "Entities/PlayerCharacter/PlayerPaperCharacter.h"
 #include "Camera/CameraComponent.h"
-#include "Components/AttributesComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Entities/Enemies/EnemyPaperCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -18,7 +18,12 @@
 #include "PaperFlipbookComponent.h"
 
 
-APlayerPaperCharacter::APlayerPaperCharacter()
+
+APlayerPaperCharacter::APlayerPaperCharacter():
+	Health{3},
+	MaxHealth{3},
+	Score{0},
+	bIsAlive{true}
 {
 	PrimaryActorTick.bCanEverTick = true;
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
@@ -26,13 +31,15 @@ APlayerPaperCharacter::APlayerPaperCharacter()
 	//Setting Capsule component properties
 	GetCapsuleComponent()->SetCapsuleRadius(12.0);
 	GetCapsuleComponent()->SetCapsuleHalfHeight(12.0f);
-	
+		
 	//Setting Spring Arm component
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true);
 	CameraBoom->AddRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	CameraBoom->TargetArmLength = 250.0f;
+	//CameraBoom->bDoCollisionTest(false);
+
 
 	//Setting Camera component
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
@@ -46,15 +53,18 @@ APlayerPaperCharacter::APlayerPaperCharacter()
 	RuningAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Runing Anim")); 
 	JumpRiseAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Jump RiseAnim"));
 	JumpFallAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Jump DownAnim"));
-	DieAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Die Anim"));
-	//Attribute construction
-	Attributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("Attribute Component"));
+	DeathAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Death Anim"));
+	TakeDamageAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Take Damage Anim"));
 }
 
 
 void APlayerPaperCharacter::BeginPlay()
 {
+	
 	Super::BeginPlay();
+	GetCapsuleComponent()->SetGenerateOverlapEvents(true);
+	UE_LOG(LogTemp, Warning, TEXT("Starting Health: %f"), GetHealth());
+
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
 
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
@@ -70,8 +80,9 @@ void APlayerPaperCharacter::Move(const FInputActionValue& Value)
 	//Where is forward
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller) {
+	if (Controller && bIsAlive) {
 		const FRotator Rotation = Controller->GetControlRotation();
+	
 		const FRotator YawRotation(0, Rotation.Yaw, 0);		
 
 		//add Movement
@@ -80,7 +91,7 @@ void APlayerPaperCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-//realted to movement and changing animations in response
+//related to movement and changing animations in response
 void APlayerPaperCharacter::UpdatePlayer()
 {
 	//updates animation to match the movement
@@ -112,28 +123,27 @@ void APlayerPaperCharacter::UpdateAnimation()
 	//is the velocity of te character greater on ground greater than 0
 
 	//first check if the player is alive
-	if (Attributes->IsAlive() == true)
-	{
-		//are we in the air
-		if (GetCharacterMovement()->IsFalling()) {
-			//then check for falling speed and set flipbook accordingly
-			UPaperFlipbook* DesiredAnimation = (PlayerVelocity.Z < 0.0f) ? JumpFallAnimation : JumpRiseAnimation;
-			GetSprite()->SetFlipbook(DesiredAnimation);
-		}
-		else
+		if (bIsAlive)
 		{
-			//else, check for ground speed and change the flipbooks
-			UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RuningAnimation : IdleAnimation;
-			GetSprite()->SetFlipbook(DesiredAnimation);
+			//are we in the air
+			if (GetCharacterMovement()->IsFalling()) {
+				//then check for falling speed and set flipbook accordingly
+				UPaperFlipbook* DesiredAnimation = (PlayerVelocity.Z < 0.0f) ? JumpFallAnimation : JumpRiseAnimation;
+				GetCharacterMovement()->AirControl = 0.2f;
+				GetSprite()->SetFlipbook(DesiredAnimation);
+			}
+			else
+			{
+				//else, check for ground speed and change the flipbooks
+				UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RuningAnimation : IdleAnimation;
+				GetSprite()->SetFlipbook(DesiredAnimation);
+			}
 		}
-	}
-	else
-	{
-		UPaperFlipbook* DesiredAnimation = DieAnimation;
-		GetSprite()->SetFlipbook(DesiredAnimation);
-	}
-	
+		else {
+
+		}
 }
+
 
 void APlayerPaperCharacter::Tick(float DeltaTime)
 {
@@ -147,35 +157,55 @@ void APlayerPaperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-	{	//Move Backwards and Forward
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerPaperCharacter::Move);
-	
-		// Jumping, already implemented in ACharacter
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+	{	
+		//if (bIsAlive) {
+			//Move Backwards and Forward
+			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerPaperCharacter::Move);
+		
+			// Jumping, already implemented in ACharacter
+			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		//}
 	}
 }
 
 //SetHealth Implementation
-void APlayerPaperCharacter::SetHealth(AHealthPickup* HealthPickup)
-{
-	if (Attributes && HealthPickup) 
-	{
-		Attributes->AddHealth(HealthPickup->GetHealth());
-	}
+void APlayerPaperCharacter::AddHealth(float HealthToAdd)
+{	
+	Health = FMath::Clamp(Health + HealthToAdd, 0.f, MaxHealth);
+	UE_LOG(LogTemp, Warning, TEXT("Current Health after pickup: %f"), GetHealth());
 }
 
 //IncrementPoints Implementation
-void APlayerPaperCharacter::IncrementPoints(APointsPickup* PointsPickup)
+void APlayerPaperCharacter::AddPoints(float PointsToAdd)
 {
-	if (Attributes && PointsPickup)
-	{
-		Attributes->AddPoints(PointsPickup->GetPoints());
-	}
+	Score += PointsToAdd;
+	UE_LOG(LogTemp, Warning, TEXT("Current points after pickup: %f"), GetScore());
 }
 
 float APlayerPaperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	return 0.0f;
+	//RecieveDamage(DamageAmount); 
+	Health= FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
+	
+	if(!IsAlive(Health)){
+		//character death
+		UE_LOG(LogTemp, Warning, TEXT("player dead"));
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Current Health after taking damage: %f"), GetHealth());
+	//UE_LOG(LogTemp, Warning, TEXT("Is Alive %s"), IsAlive(Health) ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogTemp, Warning, TEXT("Is Alive %s"), bIsAlive? TEXT("true") : TEXT("false"));
+	return DamageAmount;
 }
 
+
+bool APlayerPaperCharacter::IsAlive(float CurrentHealth)
+{
+	if (CurrentHealth <= 0) {
+		bIsAlive = false;
+		UE_LOG(LogTemp, Warning, TEXT("im dead with Current health %f"), CurrentHealth);
+		return bIsAlive;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("im alive with Current health %f"), CurrentHealth);
+	return bIsAlive;
+}

@@ -10,7 +10,6 @@
 /**
  * 
  */
-class UAttributesComponent;
 class UBoxComponent;
 class UPaperFlipbook;
 class UStaticMeshComponent;
@@ -27,21 +26,24 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UFUNCTION()
-	virtual void OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
+	virtual void WallDetectionEvent(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 	const FHitResult& SweepResult); 
 
-	//To implement
-	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-	//class AController* EventInstigator, AActor* DamageCauser) override;
+	UFUNCTION()
+	virtual void OnBeginColisionDamageEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
+		const FHitResult& SweepResult);
 
-	//tuirns the enemy character when overlapping with wall
+	UFUNCTION()
+	virtual void FloorDetectionEvent(UPrimitiveComponent* OverlappedComp, 
+		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 	void TurnCharacter();
 
 protected:
 
 	virtual void BeginPlay();
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 	UPaperFlipbook* RuningAnimation;
@@ -49,12 +51,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UBoxComponent* FrontCollisionBox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UBoxComponent* BottomCollisonBox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UBoxComponent* DamageBox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Damage value")
+	float DamageValue;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageType> DamageType;
+
 private:
-
-	//to implement
-	UPROPERTY(VisibleAnywhere)
-	UAttributesComponent* Attributes;
-
-	
-
 };

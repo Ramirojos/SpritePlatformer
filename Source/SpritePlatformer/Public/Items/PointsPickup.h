@@ -16,7 +16,7 @@ class SPRITEPLATFORMER_API APointsPickup : public ASpritePickup
 public:
 
 	APointsPickup();
-	inline int32 GetPoints() const{ return Points; }
+	inline int32 GetPoints() const{ return PointsValue; }
 	
 
 protected:
@@ -28,6 +28,6 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Points Pickup")
-	int32 Points;
+	int32 PointsValue;
 	
 };

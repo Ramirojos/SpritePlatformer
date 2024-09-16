@@ -18,7 +18,6 @@
 class ASpritePickup;
 class AHealthPickup;
 class APointsPickup;
-class UAttributesComponent;
 class UCameraComponent;
 class UCapsuleComponent;
 class USpringArmComponent;
@@ -38,17 +37,37 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
-	virtual void SetHealth(class AHealthPickup* HealthPickup) override;
-	virtual void IncrementPoints(class APointsPickup* PointsPickup) override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-		class AController* EventInstigator, AActor* DamageCauser)override;
-	
+	//Health and points setup
 
+	UFUNCTION(BlueprintCallable)
+	float GetHealth() { return Health; };
+
+	UFUNCTION(BlueprintCallable)
+	float GetScore() { return Score; };
+
+	UFUNCTION(BlueprintCallable)
+	//void AddHealth(class AHealthPickup* HealthPickup);
+	void AddHealth(float HealthToAdd);
+
+	UFUNCTION(BlueprintCallable)
+	void AddPoints(float PointsToAdd);
+	
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const &DamageEvent,
+		AController* EventInstigator,
+		AActor* DamageCauser
+	) override;
+	
+	bool IsAlive(float CurrentHealth);
+	
 protected:
 
 	virtual void BeginPlay() override;
 
 	/******* Movement related properties ******/
+	UPROPERTY(BlueprintReadWrite)
+	float MaxHealth;
 
 	//Mapping Context
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = input)
@@ -79,7 +98,10 @@ protected:
 	UPaperFlipbook* JumpFallAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
-	UPaperFlipbook* DieAnimation;
+	UPaperFlipbook* DeathAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
+	UPaperFlipbook* TakeDamageAnimation;
 
 	///*************///
 
@@ -101,6 +123,11 @@ private:
 	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere)
-	UAttributesComponent* Attributes;
+	float Health;
 
+	UPROPERTY(VisibleAnywhere)
+	float Score;
+
+	UPROPERTY(VisibleAnywhere)
+	bool bIsAlive;
 };

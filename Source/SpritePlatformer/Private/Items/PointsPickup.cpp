@@ -2,10 +2,10 @@
 
 
 #include "Items/PointsPickup.h"
-#include "Interfaces/PickupInterface.h"
+#include "Entities/PlayerCharacter/PlayerPaperCharacter.h"
 
 APointsPickup::APointsPickup() :
-	Points{10} {
+	PointsValue{10} {
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -14,10 +14,9 @@ void APointsPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlapped
 {
 	//check if te cast is successful, if it is, then call AddPoints from 
 	//PlayerCharacter
-	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
-	if (PickupInterface) {
-		PickupInterface->IncrementPoints(this);
-		
+	APlayerPaperCharacter* PlayerCahar = Cast<APlayerPaperCharacter>(OtherActor);
+	if (PlayerCahar) {
+		PlayerCahar->AddPoints(PointsValue);
 		Destroy();
 	}
 }

@@ -25,6 +25,4 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Health Pickup")
 	int32 HealthValue;
-
-
 };
