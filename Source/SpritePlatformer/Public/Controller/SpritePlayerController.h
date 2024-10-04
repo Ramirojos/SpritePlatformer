@@ -21,6 +21,7 @@ class SPRITEPLATFORMER_API ASpritePlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	ASpritePlayerController();
+	void SetPlayerEnabledState(bool bPlayerEnabled);
 
 protected:
 

@@ -4,11 +4,13 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Controller/SpritePlayerController.h"
 #include "Entities/Enemies/EnemyPaperCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameMode/PlatformerGameMode.h"
 #include "Items/HealthPickup.h"
 #include "Items/PointsPickup.h"
 #include "Items/SpritePickup.h"
@@ -60,18 +62,32 @@ APlayerPaperCharacter::APlayerPaperCharacter():
 
 void APlayerPaperCharacter::BeginPlay()
 {
-	
 	Super::BeginPlay();
 	GetCapsuleComponent()->SetGenerateOverlapEvents(true);
 	UE_LOG(LogTemp, Warning, TEXT("Starting Health: %f"), GetHealth());
 
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
+	PlayerController = Cast<ASpritePlayerController>(GetController());
+	if (PlayerController) {
 
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 		if (Subsystem) {
 			Subsystem->AddMappingContext(PlayerMappingContext, 0);
 		}
 	}
+
+	PlatformerGameMode =Cast<APlatformerGameMode> (UGameplayStatics::GetGameMode(this));
+}
+
+void APlayerPaperCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	UpdatePlayer();
+}
+
+
+void APlayerPaperCharacter::HandleDestruction() {
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
 }
 
 //Seting up character movement on a 2D plane
@@ -99,6 +115,7 @@ void APlayerPaperCharacter::UpdatePlayer()
 
 	//set the direction of the controller
 	const FVector PlayerVelocity = GetVelocity();
+
 	//units on X axis
 	float TravelDirection = PlayerVelocity.X;
 
@@ -120,8 +137,6 @@ void APlayerPaperCharacter::UpdateAnimation()
 {		
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
-	//is the velocity of te character greater on ground greater than 0
-
 	//first check if the player is alive
 		if (bIsAlive)
 		{
@@ -139,16 +154,6 @@ void APlayerPaperCharacter::UpdateAnimation()
 				GetSprite()->SetFlipbook(DesiredAnimation);
 			}
 		}
-		else {
-
-		}
-}
-
-
-void APlayerPaperCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	UpdatePlayer();
 }
 
 //action binding to player input, used the new enhanced input system
@@ -158,14 +163,12 @@ void APlayerPaperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{	
-		//if (bIsAlive) {
-			//Move Backwards and Forward
-			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerPaperCharacter::Move);
+		//Move Backwards and Forward
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerPaperCharacter::Move);
 		
-			// Jumping, already implemented in ACharacter
-			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		//}
+		// Jumping, already implemented in ACharacter
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 	}
 }
 
@@ -173,7 +176,6 @@ void APlayerPaperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 void APlayerPaperCharacter::AddHealth(float HealthToAdd)
 {	
 	Health = FMath::Clamp(Health + HealthToAdd, 0.f, MaxHealth);
-	UE_LOG(LogTemp, Warning, TEXT("Current Health after pickup: %f"), GetHealth());
 }
 
 //IncrementPoints Implementation
@@ -185,16 +187,14 @@ void APlayerPaperCharacter::AddPoints(float PointsToAdd)
 
 float APlayerPaperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	//RecieveDamage(DamageAmount); 
 	Health= FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
 	
-	if(!IsAlive(Health)){
+	if (!IsAlive(Health)) {
 		//character death
+		PlatformerGameMode->ActorDied(UGameplayStatics::GetPlayerPawn(this, 0));
 		UE_LOG(LogTemp, Warning, TEXT("player dead"));
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Current Health after taking damage: %f"), GetHealth());
-	//UE_LOG(LogTemp, Warning, TEXT("Is Alive %s"), IsAlive(Health) ? TEXT("true") : TEXT("false"));
-	UE_LOG(LogTemp, Warning, TEXT("Is Alive %s"), bIsAlive? TEXT("true") : TEXT("false"));
+
 	return DamageAmount;
 }
 
@@ -203,9 +203,7 @@ bool APlayerPaperCharacter::IsAlive(float CurrentHealth)
 {
 	if (CurrentHealth <= 0) {
 		bIsAlive = false;
-		UE_LOG(LogTemp, Warning, TEXT("im dead with Current health %f"), CurrentHealth);
 		return bIsAlive;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("im alive with Current health %f"), CurrentHealth);
 	return bIsAlive;
 }

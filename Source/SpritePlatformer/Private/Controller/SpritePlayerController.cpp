@@ -11,6 +11,16 @@ ASpritePlayerController::ASpritePlayerController()
 
 }
 
+void ASpritePlayerController::SetPlayerEnabledState(bool bPlayerEnabled)
+{
+	if (bPlayerEnabled) {
+		GetPawn()->EnableInput(this);
+	}
+	else {
+		GetPawn()->DisableInput(this);
+	}
+}
+
 void ASpritePlayerController::BeginPlay()
 {
 	Super::BeginPlay();

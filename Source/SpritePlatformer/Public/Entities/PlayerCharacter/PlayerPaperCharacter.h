@@ -16,8 +16,10 @@
 //
 
 class ASpritePickup;
+class APlatformerGameMode;
 class AHealthPickup;
 class APointsPickup;
+class ASpritePlayerController;
 class UCameraComponent;
 class UCapsuleComponent;
 class USpringArmComponent;
@@ -34,16 +36,19 @@ public:
 	APlayerPaperCharacter();
 
 	virtual void Tick(float DeltaTime) override;
+
+	void HandleDestruction();
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
 	//Health and points setup
 
 	UFUNCTION(BlueprintCallable)
-	float GetHealth() { return Health; };
+	float GetHealth() const { return Health; };
 
 	UFUNCTION(BlueprintCallable)
-	float GetScore() { return Score; };
+	float GetScore() const { return Score; };
 
 	UFUNCTION(BlueprintCallable)
 	//void AddHealth(class AHealthPickup* HealthPickup);
@@ -60,6 +65,8 @@ public:
 	) override;
 	
 	bool IsAlive(float CurrentHealth);
+
+	ASpritePlayerController* GetPlayerController() const { return PlayerController; }
 	
 protected:
 
@@ -130,4 +137,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	bool bIsAlive;
+
+	ASpritePlayerController* PlayerController;
+
+	APlatformerGameMode* PlatformerGameMode;
 };
