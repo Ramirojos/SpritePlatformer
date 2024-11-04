@@ -16,9 +16,9 @@ class SPRITEPLATFORMER_API AHealthPickup : public ASpritePickup
 public:	
 
 	AHealthPickup();
-	inline int32 GetHealth() { return HealthValue; }
+
 protected:
-	
+
 	virtual void OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 		const FHitResult& SweepResult) override;

@@ -2,46 +2,23 @@
 
 
 #include "GameMode/PlatformerGameMode.h"
+#include "Controller/SpritePlayerController.h"
 #include "Entities/PlayerCharacter/PlayerPaperCharacter.h"
-#include "Controller/SpritePlayerController.h" 
+#include "Items/PointsPickup.h" 
 #include "Kismet/GameplayStatics.h"
 
-//what happens when teh Player Actor dies
-void APlatformerGameMode::ActorDied(AActor* DeadActor)
-{
-	if (DeadActor == PlayerChar) {
-		//check for player controller and if valid disable input
-		PlayerChar->HandleDestruction();
-		//SpriteController = Cast<ASpritePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-		
-		if (SpriteController)
-		{
-			SpriteController->SetPlayerEnabledState(false);
-		}
-		
-	}
-}
 
-void APlatformerGameMode::BeginPlay()
-{
-	Super::BeginPlay();
-
-	HandleGameStart();
-
-	
-}
 
 void APlatformerGameMode::HandleGameStart()
 {
-	PlayerChar = Cast<APlayerPaperCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
 	SpriteController = Cast<ASpritePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 
 	//Event to be called from blueprint,
-	//will use it to create and manipulate Start Game widget
+	//will be used to create and manipulate Start Game widget
 	StartGame();
 
 	//Disable the input until the timer runs out
-	if (SpriteController) {
+	if (IsValid(SpriteController)) {
 		SpriteController->SetPlayerEnabledState(false);
 
 		//Handle for SetTimer
@@ -49,14 +26,39 @@ void APlatformerGameMode::HandleGameStart()
 
 		//Delegate 
 		FTimerDelegate PlayerEnabledTimerDelegate = FTimerDelegate::CreateUObject(
-				SpriteController,
-				&ASpritePlayerController::SetPlayerEnabledState,
-				true);
+			SpriteController,
+			&ASpritePlayerController::SetPlayerEnabledState,
+			true);
 
 		//Overloaded SetTimer function for callback with inputs 
 		GetWorldTimerManager().SetTimer(PlayerEnableTimeHandle,
-				PlayerEnabledTimerDelegate,
-				StartDelay,
-				false);
+			PlayerEnabledTimerDelegate,
+			StartDelay,
+			false);
 	}
+}
+
+//What happens when the Player Actor dies, could be a player (or an enemy in the future)
+void APlatformerGameMode::ActorDied(AActor* DeadActor)
+{
+	if (DeadActor == PlayerChar) {
+		PlayerChar->HandleDestruction();
+	}
+	//If GameOver == false, then player lost.
+	GameOver(false);
+}
+
+void APlatformerGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	HandleGameStart();
+}
+
+int APlatformerGameMode::GetPointsPickupCount()
+{
+	//StaticClass returns the type of UObject instance using the instance->GetClass() function.
+	UGameplayStatics::GetAllActorsOfClass(this, APointsPickup::StaticClass(), PointsPickups);
+	
+	return PointsPickups.Num();
 }

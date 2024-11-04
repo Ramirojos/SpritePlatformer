@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
 #include "InputActionValue.h"
-#include "Interfaces/PickupInterface.h"
+//#include "Interfaces/PickupInterface.h"
 #include "PlayerPaperCharacter.generated.h"
 
 
@@ -28,7 +28,7 @@ class UInputAction;
 class UPaperFlipbook;
 
 UCLASS()
-class SPRITEPLATFORMER_API APlayerPaperCharacter : public APaperCharacter, public IPickupInterface
+class SPRITEPLATFORMER_API APlayerPaperCharacter : public APaperCharacter
 {
 	GENERATED_BODY()
 public:
@@ -51,7 +51,6 @@ public:
 	float GetScore() const { return Score; };
 
 	UFUNCTION(BlueprintCallable)
-	//void AddHealth(class AHealthPickup* HealthPickup);
 	void AddHealth(float HealthToAdd);
 
 	UFUNCTION(BlueprintCallable)
@@ -89,9 +88,9 @@ protected:
 	UInputAction* JumpAction;
 	
 
-	///******* Anmiation relted properties *******///
+	///******* Aniation related properties *******///
 
-	//Actions to be liked to wich link the sprite animations on the BP
+	//Actions liked to sprite animations on the BP
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 	UPaperFlipbook* IdleAnimation;
 
@@ -115,7 +114,7 @@ protected:
 	//Functions called for Inputs
 	void Move(const FInputActionValue& Value);
 	
-	//update player position
+	//Update player position
 	void UpdatePlayer();
 
 	//Update the animation when input changes
@@ -141,4 +140,6 @@ private:
 	ASpritePlayerController* PlayerController;
 
 	APlatformerGameMode* PlatformerGameMode;
+
+	APlayerPaperCharacter* PlayerChar;
 };

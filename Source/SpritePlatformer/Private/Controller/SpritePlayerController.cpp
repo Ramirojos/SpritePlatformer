@@ -11,6 +11,7 @@ ASpritePlayerController::ASpritePlayerController()
 
 }
 
+
 void ASpritePlayerController::SetPlayerEnabledState(bool bPlayerEnabled)
 {
 	if (bPlayerEnabled) {

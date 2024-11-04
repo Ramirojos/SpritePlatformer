@@ -40,8 +40,6 @@ APlayerPaperCharacter::APlayerPaperCharacter():
 	CameraBoom->SetUsingAbsoluteRotation(true);
 	CameraBoom->AddRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	CameraBoom->TargetArmLength = 250.0f;
-	//CameraBoom->bDoCollisionTest(false);
-
 
 	//Setting Camera component
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
@@ -49,7 +47,7 @@ APlayerPaperCharacter::APlayerPaperCharacter():
 
 	GetCharacterMovement()->MaxWalkSpeed = 300;
 	GetCharacterMovement()->MaxAcceleration = 300;
-
+	
 	//Animation properties		
 	IdleAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Idle Anim"));
 	RuningAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Runing Anim")); 
@@ -57,25 +55,31 @@ APlayerPaperCharacter::APlayerPaperCharacter():
 	JumpFallAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Jump DownAnim"));
 	DeathAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Death Anim"));
 	TakeDamageAnimation = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Take Damage Anim"));
+	
+	//Jump properties
+	GetCharacterMovement()->AirControl = 1.0f;
+	GetCharacterMovement()->AirControlBoostMultiplier = 100.f;
+	GetCharacterMovement()->AirControlBoostVelocityThreshold = 100.0;
+	
+	JumpMaxCount = 2;
+	
 }
-
 
 void APlayerPaperCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetCapsuleComponent()->SetGenerateOverlapEvents(true);
-	UE_LOG(LogTemp, Warning, TEXT("Starting Health: %f"), GetHealth());
 
 	PlayerController = Cast<ASpritePlayerController>(GetController());
-	if (PlayerController) {
-
+	if (IsValid(PlayerController)) {
+		
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 		if (Subsystem) {
 			Subsystem->AddMappingContext(PlayerMappingContext, 0);
 		}
 	}
 
-	PlatformerGameMode =Cast<APlatformerGameMode> (UGameplayStatics::GetGameMode(this));
+	PlatformerGameMode = Cast<APlatformerGameMode> (UGameplayStatics::GetGameMode(this));
 }
 
 void APlayerPaperCharacter::Tick(float DeltaTime)
@@ -86,6 +90,8 @@ void APlayerPaperCharacter::Tick(float DeltaTime)
 
 
 void APlayerPaperCharacter::HandleDestruction() {
+	
+	GetCharacterMovement()->DisableMovement();
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
 }
@@ -107,19 +113,19 @@ void APlayerPaperCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-//related to movement and changing animations in response
+//Related to movement and changing animations in response
 void APlayerPaperCharacter::UpdatePlayer()
 {
-	//updates animation to match the movement
+	//Updates animation to match the movement
 	UpdateAnimation();
 
-	//set the direction of the controller
+	//Set the direction of the controller
 	const FVector PlayerVelocity = GetVelocity();
 
 	//units on X axis
 	float TravelDirection = PlayerVelocity.X;
 
-	//we need to check if player is in the air
+	//We need to check if player is in the air
 	if (Controller) {
 		if (TravelDirection < 0.0f)
 		{
@@ -137,26 +143,27 @@ void APlayerPaperCharacter::UpdateAnimation()
 {		
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
-	//first check if the player is alive
+	//First check if the player is alive
 		if (bIsAlive)
 		{
-			//are we in the air
+			//Are we in the air
 			if (GetCharacterMovement()->IsFalling()) {
-				//then check for falling speed and set flipbook accordingly
+				//Then check for falling speed and set flipbook accordingly
 				UPaperFlipbook* DesiredAnimation = (PlayerVelocity.Z < 0.0f) ? JumpFallAnimation : JumpRiseAnimation;
-				GetCharacterMovement()->AirControl = 0.2f;
+				
+
 				GetSprite()->SetFlipbook(DesiredAnimation);
 			}
 			else
 			{
-				//else, check for ground speed and change the flipbooks
+				//Else, check for ground speed and change the flipbooks
 				UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RuningAnimation : IdleAnimation;
 				GetSprite()->SetFlipbook(DesiredAnimation);
 			}
 		}
 }
 
-//action binding to player input, used the new enhanced input system
+//Action binding to player input, used the new enhanced input system
 void APlayerPaperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -182,22 +189,29 @@ void APlayerPaperCharacter::AddHealth(float HealthToAdd)
 void APlayerPaperCharacter::AddPoints(float PointsToAdd)
 {
 	Score += PointsToAdd;
-	UE_LOG(LogTemp, Warning, TEXT("Current points after pickup: %f"), GetScore());
 }
 
+//Manage what happens when the player takes damage
 float APlayerPaperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Health= FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
+		
+	GetSprite()->SetFlipbook(TakeDamageAnimation);
+	GetSprite()->PlayFromStart();
 	
 	if (!IsAlive(Health)) {
-		//character death
+
+		//Character death
+		GetSprite()->SetFlipbook(DeathAnimation);
+
+		FTimerHandle PlayerDestructionhandle;
+		GetWorldTimerManager().SetTimer(PlayerDestructionhandle,this, &APlayerPaperCharacter::HandleDestruction, 0.6f, false);
+
 		PlatformerGameMode->ActorDied(UGameplayStatics::GetPlayerPawn(this, 0));
-		UE_LOG(LogTemp, Warning, TEXT("player dead"));
 	}
 
 	return DamageAmount;
 }
-
 
 bool APlayerPaperCharacter::IsAlive(float CurrentHealth)
 {

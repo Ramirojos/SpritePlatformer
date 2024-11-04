@@ -3,6 +3,8 @@
 
 #include "Items/PointsPickup.h"
 #include "Entities/PlayerCharacter/PlayerPaperCharacter.h"
+#include "GameMode/PlatformerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 APointsPickup::APointsPickup() :
 	PointsValue{10} {
@@ -12,11 +14,20 @@ APointsPickup::APointsPickup() :
 void APointsPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep, const FHitResult& SweepResult)
 {
-	//check if te cast is successful, if it is, then call AddPoints from 
-	//PlayerCharacter
-	APlayerPaperCharacter* PlayerCahar = Cast<APlayerPaperCharacter>(OtherActor);
-	if (PlayerCahar) {
-		PlayerCahar->AddPoints(PointsValue);
+	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
+	APlatformerGameMode* GameMode = (APlatformerGameMode*)GetWorld()->GetAuthGameMode();
+
+	if (IsValid(PlayerChar)) {
+		PlayerChar->AddPoints(PointsValue);
 		Destroy();
+
+		if (IsValid(GameMode))
+		{
+			int32 NumOFPickups = GameMode->GetPointsPickupCount();
+		}
 	}
 }
+	
+
+
+
