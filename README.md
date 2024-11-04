@@ -16,13 +16,13 @@ Small platformer using 2D sprites with Unreal engine. The objective is to practi
 
 **Create Base Enemy and its base characteristics (capusle, sprite, etc). //DONE**
 
-**Creation of win/lose conditions ( life = 0 -> lose,  X ammount of points and win platform overlap -> win). //Partially done, only loose condition at the moment.**
+**Creation of win/lose conditions ( life = 0 -> lose,  X ammount of points and win platform overlap -> win). //Partially done, only loose condition at the moment. //DONE**
 
 **Create specialized Enemies ( slow but more damage, fast one, normal one)**
 
-**Tweaks to the player character( better mid-air controll during jumps, death animation, etc).**
+**Tweaks to the player character( better mid-air controll during jumps, death animation, etc). //DONE**
 
-**Menu and in Game UI.//PArtially Done, Made "Start Level" widget**
+**Menu and in Game UI.//Partially Done, Made "Start Level" widget**
 
 **LOG:**
 09/16/24
@@ -30,6 +30,8 @@ Removed the Attributes component and system. Out of scope for such a simple proj
 Decided to save the character stats inside the PlayerPaperCharacter file. 
 Interactions between pickups, enemy and character working as intended. 
 TODO: keep cleaning code.
+
+////////////////////////////////////////////
 
 10/04/24
 Created Gamemode and added functionality:
@@ -41,6 +43,28 @@ Improvements on the SpritePlayerController Class: creation of the SetPlayerEnabl
 PlayerPaperCharacter: 
 Creation of HandleDestruction() method.
 
+////////////////////////////////////////////
 
+11/4/2024
+Win/Lose conditions:
+changed the win conditions from "collect all pickup points" to win when all the points pickups were collected and reach the "Win zone".
 
+Game over widgets:
+Created both win and lose widgets, triggered when the player reaches the "Win zone" and when the player life reaches 0.
 
+Start Game
+Enable input after a imer reaches 0.
+Countdown widget.
+
+Level progression:
+when player collects all of the points pickups and reaches a "next level zone" the next level is loaded. All of the player stats return to heir default value.
+
+Jump Improvements:
+Mid air controls improvement.
+Added double jump
+
+Other:
+Code cleanup.
+Removed Pickup Interface, not longer needed.
+
+////////////////////////////////////////////
