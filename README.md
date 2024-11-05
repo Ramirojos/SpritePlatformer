@@ -16,7 +16,7 @@ Small platformer using 2D sprites with Unreal engine. The objective is to practi
 
 **Create Base Enemy and its base characteristics (capusle, sprite, etc). //DONE**
 
-**Creation of win/lose conditions ( life = 0 -> lose,  X ammount of points and win platform overlap -> win). //Partially done, only loose condition at the moment. //DONE**
+**Creation of win/lose conditions ( life = 0 -> lose,  X ammount of points and win platform overlap -> win).//DONE**
 
 **Create specialized Enemies ( slow but more damage, fast one, normal one)**
 
