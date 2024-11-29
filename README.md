@@ -18,11 +18,12 @@ Small platformer using 2D sprites with Unreal engine. The objective is to practi
 
 **Creation of win/lose conditions ( life = 0 -> lose,  X ammount of points and win platform overlap -> win).//DONE**
 
-**Create specialized Enemies ( slow but more damage, fast one, normal one)**
-
 **Tweaks to the player character( better mid-air controll during jumps, death animation, etc). //DONE**
 
-**Menu and in Game UI.//Partially Done, Made "Start Level" widget**
+**Menu and in Game UI.//Partially Done, Made "Start Level" widget // DONE**
+
+**Sound Cues for characters and items //DONE**
+
 
 **LOG:**
 09/16/24
@@ -53,7 +54,7 @@ Game over widgets:
 Created both win and lose widgets, triggered when the player reaches the "Win zone" and when the player life reaches 0.
 
 Start Game
-Enable input after a imer reaches 0.
+Enable input after a timer reaches 0.
 Countdown widget.
 
 Level progression:
@@ -68,3 +69,32 @@ Code cleanup.
 Removed Pickup Interface, not longer needed.
 
 ////////////////////////////////////////////
+
+11/29/2024
+
+Levels:
+Level creation with 2D tilesets.
+
+Improvement to UI:
+Changed the Game OVer and Win Game widgets to new levels with it's own UI. 
+Functional Buttons that navegate between levels (Play Game(goes to level 1), Quit Game, Play Again).
+
+New Actors:
+Created two new trigger areas, one for advancing from "level 1" to "level 2" and one to trigger the end of the game and advance to the "Game Over" screen, when all of the points pickups are collected.
+Added an area that damages the player when overlapped.
+
+Sound:
+Added background music for all the levels.
+Added individual sound effects for jumping, taking damage and picking up health and points.
+
+Other:
+Finishing touches to levels, player character and enemy character.
+Code refactoring.
+
+////////////////////////////////////////
+
+
+
+
+
+
