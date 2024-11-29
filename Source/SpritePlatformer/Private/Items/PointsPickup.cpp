@@ -9,6 +9,12 @@
 APointsPickup::APointsPickup() :
 	PointsValue{10} {
 	PrimaryActorTick.bCanEverTick = true;
+
+	static ConstructorHelpers::FObjectFinder<USoundBase>PickupSoundObject(TEXT("/Script/Engine.SoundWave'/Game/Audio/sounds/coin.coin'"));
+	if (IsValid(PickupSoundObject.Object))
+	{
+		PickupSound = PickupSoundObject.Object;
+	}
 }
 
 void APointsPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -16,6 +22,8 @@ void APointsPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlapped
 {
 	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
 	APlatformerGameMode* GameMode = (APlatformerGameMode*)GetWorld()->GetAuthGameMode();
+
+	UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
 
 	if (IsValid(PlayerChar)) {
 		PlayerChar->AddPoints(PointsValue);

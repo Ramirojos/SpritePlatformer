@@ -56,6 +56,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddPoints(float PointsToAdd);
 	
+	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(
 		float DamageAmount,
 		struct FDamageEvent const &DamageEvent,
@@ -63,9 +64,13 @@ public:
 		AActor* DamageCauser
 	) override;
 	
+	UFUNCTION(BlueprintCallable)
 	bool IsAlive(float CurrentHealth);
 
 	ASpritePlayerController* GetPlayerController() const { return PlayerController; }
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* DamageSound;
 	
 protected:
 

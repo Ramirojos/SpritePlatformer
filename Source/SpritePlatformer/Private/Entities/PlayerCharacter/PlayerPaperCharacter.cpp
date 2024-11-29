@@ -62,6 +62,12 @@ APlayerPaperCharacter::APlayerPaperCharacter():
 	GetCharacterMovement()->AirControlBoostVelocityThreshold = 100.0;
 	
 	JumpMaxCount = 2;
+
+	static ConstructorHelpers::FObjectFinder<USoundBase>DamageSoundObject(TEXT("/Script/Engine.SoundWave'/Game/Audio/sounds/hurt.hurt'"));
+	if (IsValid(DamageSoundObject.Object))
+	{
+		DamageSound = DamageSoundObject.Object;
+	}
 	
 }
 
@@ -198,7 +204,9 @@ float APlayerPaperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& 
 		
 	GetSprite()->SetFlipbook(TakeDamageAnimation);
 	GetSprite()->PlayFromStart();
-	
+
+	//UGameplayStatics::PlaySound2D(this, DamageSound);
+	UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
 	if (!IsAlive(Health)) {
 
 		//Character death
@@ -208,6 +216,7 @@ float APlayerPaperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& 
 		GetWorldTimerManager().SetTimer(PlayerDestructionhandle,this, &APlayerPaperCharacter::HandleDestruction, 0.6f, false);
 
 		PlatformerGameMode->ActorDied(UGameplayStatics::GetPlayerPawn(this, 0));
+		UGameplayStatics::OpenLevel(this, "GameOver_Screen");
 	}
 
 	return DamageAmount;

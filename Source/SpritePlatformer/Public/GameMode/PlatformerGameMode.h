@@ -23,11 +23,14 @@ public:
 
 	void ActorDied(AActor* DeadActor);
 	
+	UFUNCTION(BLueprintCallable)
 	int GetPointsPickupCount();
 		
-	//display end of game win/loose
-	UFUNCTION(BlueprintImplementableEvent)
-	void GameOver(bool bWonGame);
+	UFUNCTION(BlueprintCallable)
+	int GetInitPickups() { return InitPointsPickups; }
+
+	void SetinitPickups(int NumOfPickups);
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -41,9 +44,13 @@ private:
 	APlayerPaperCharacter* PlayerChar;
 	ASpritePlayerController* SpriteController;
 
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TArray<AActor*> PointsPickups;
-	
+		
+	int InitPointsPickups;
+
 	float StartDelay = 3.0f;
 	
 	void HandleGameStart();
+
 };

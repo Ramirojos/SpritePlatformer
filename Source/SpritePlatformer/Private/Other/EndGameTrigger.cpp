@@ -2,9 +2,10 @@
 
 
 #include "Other/EndGameTrigger.h"
-#include "Entities/PlayerCharacter/PlayerPaperCharacter.h"
-#include "GameMode/PlatformerGameMode.h"
 #include "Components/BoxComponent.h"
+#include "Entities/PlayerCharacter/PlayerPaperCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameMode/PlatformerGameMode.h"
 
 // Sets default values
 AEndGameTrigger::AEndGameTrigger()
@@ -13,8 +14,6 @@ AEndGameTrigger::AEndGameTrigger()
 	PrimaryActorTick.bCanEverTick = true;
 
 	TriggerArea = CreateDefaultSubobject<UBoxComponent>(TEXT("Trigger Area"));
-
-
 }
 
 // Called when the game starts or when spawned
@@ -40,8 +39,25 @@ void AEndGameTrigger::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlapp
 
 	if (IsValid(PlayerChar) && IsValid(GameMode)) {
 		if (GameMode->GetPointsPickupCount() == 0) {
-			GameMode->GameOver(true);
+
+			FTimerManager& TimerManager = GetWorldTimerManager();
+			FTimerHandle TimerHandle;
+
+			TimerManager.SetTimer(TimerHandle, this, &AEndGameTrigger::ToGameOverMenu, 2.0f, false);
+			
+			ToGameOverMenu();
 		}
 	}
+}
+
+void AEndGameTrigger::ToGameOverMenu()
+{
+	APlatformerGameMode* GameMode = (APlatformerGameMode*)GetWorld()->GetAuthGameMode();
+
+	if (IsValid(GameMode) && GameMode->GetPointsPickupCount() == 0)
+	{
+		UGameplayStatics::OpenLevel(this, "Game_Over_Win_Screen");
+	}
+
 }
 

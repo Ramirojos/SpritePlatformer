@@ -24,6 +24,8 @@ public:
 		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 		const FHitResult& SweepResult);
 
+	void ToGameOverMenu();
+
 protected:
 
 	virtual void BeginPlay() override;

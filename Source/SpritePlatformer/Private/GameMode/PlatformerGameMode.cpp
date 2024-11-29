@@ -44,13 +44,12 @@ void APlatformerGameMode::ActorDied(AActor* DeadActor)
 	if (DeadActor == PlayerChar) {
 		PlayerChar->HandleDestruction();
 	}
-	//If GameOver == false, then player lost.
-	GameOver(false);
 }
 
 void APlatformerGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	SetinitPickups(GetPointsPickupCount());
 
 	HandleGameStart();
 }
@@ -61,4 +60,9 @@ int APlatformerGameMode::GetPointsPickupCount()
 	UGameplayStatics::GetAllActorsOfClass(this, APointsPickup::StaticClass(), PointsPickups);
 	
 	return PointsPickups.Num();
+}
+
+
+void APlatformerGameMode::SetinitPickups(int NumOfPickups) {
+	InitPointsPickups = NumOfPickups;
 }

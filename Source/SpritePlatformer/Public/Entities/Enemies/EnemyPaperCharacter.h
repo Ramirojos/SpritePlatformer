@@ -26,17 +26,17 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UFUNCTION()
-	virtual void WallDetectionEvent(UPrimitiveComponent* OverlappedComponent,
+	void WallDetectionEvent(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 	const FHitResult& SweepResult); 
 
 	UFUNCTION()
-	virtual void OnBeginColisionDamageEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	void OnBeginColisionDamageEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 		const FHitResult& SweepResult);
 
 	UFUNCTION()
-	virtual void FloorDetectionEvent(UPrimitiveComponent* OverlappedComp, 
+	void FloorDetectionEvent(UPrimitiveComponent* OverlappedComp, 
 		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
 	void TurnCharacter();

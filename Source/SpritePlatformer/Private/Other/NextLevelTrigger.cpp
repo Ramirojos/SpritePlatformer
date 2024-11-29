@@ -14,7 +14,7 @@ ANextLevelTrigger::ANextLevelTrigger()
 	PrimaryActorTick.bCanEverTick = true;
 
 	TriggerArea = CreateDefaultSubobject<UBoxComponent>(TEXT("Triger Area"));
-	levels = { "Level_One", "level_Two" };
+	levels = { "Level_1", "level_2" };
 }
 
 // Called when the game starts or when spawned
@@ -39,8 +39,11 @@ void ANextLevelTrigger::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overla
 
 	if (IsValid(PlayerChar) && IsValid(GameMode)) {
 		if (GameMode->GetPointsPickupCount() == 0) {
-			GameMode->GameOver(true);
-			SwitchLevel();
+			
+			FTimerManager& TimerManager = GetWorldTimerManager();
+			FTimerHandle TimerHandle;
+
+			TimerManager.SetTimer(TimerHandle, this, &ANextLevelTrigger::SwitchLevel, 1.0f , false);
 		}
 	}
 }

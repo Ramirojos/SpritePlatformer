@@ -70,7 +70,7 @@ void AEnemyPaperCharacter::Tick(float DeltaTime)
 void AEnemyPaperCharacter::WallDetectionEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep, 
 	const FHitResult& SweepResult)
-{	
+{
 	TurnCharacter();
 }
 
@@ -82,10 +82,12 @@ void AEnemyPaperCharacter::FloorDetectionEvent(UPrimitiveComponent* OverlappedCo
 
 void AEnemyPaperCharacter::OnBeginColisionDamageEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep, const FHitResult& SweepResult)
 {
-	AController* PlayerChar = GetInstigator()->GetController();
+	AController* EnemyController = GetInstigator()->GetController();
+	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
 
-	UGameplayStatics::ApplyDamage(OtherActor, DamageValue, PlayerChar, this, DamageType);
-
+	if (IsValid(PlayerChar)) {
+		UGameplayStatics::ApplyDamage(OtherActor, DamageValue, EnemyController, this, DamageType);
+	}	
 }
 
 //set the actor rotation to 180° of the original
