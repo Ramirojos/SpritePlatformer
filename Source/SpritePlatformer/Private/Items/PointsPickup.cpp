@@ -23,12 +23,13 @@ void APointsPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlapped
 	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
 	APlatformerGameMode* GameMode = (APlatformerGameMode*)GetWorld()->GetAuthGameMode();
 
-	UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
+	
 
 	if (IsValid(PlayerChar)) {
+		
 		PlayerChar->AddPoints(PointsValue);
 		Destroy();
-
+		UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
 		if (IsValid(GameMode))
 		{
 			int32 NumOFPickups = GameMode->GetPointsPickupCount();

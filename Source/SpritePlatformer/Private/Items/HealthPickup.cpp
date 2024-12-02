@@ -19,13 +19,13 @@ AHealthPickup::AHealthPickup() :
 void AHealthPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
-
+	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
+		
 	//check if the cast is successful, if it is, then call SetHealth from 
 	//PlayerCharacter	
-	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
-	
 	if (IsValid(PlayerChar)) {
+		
+		UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
 		PlayerChar->AddHealth(HealthValue);
 		Destroy();
 	}

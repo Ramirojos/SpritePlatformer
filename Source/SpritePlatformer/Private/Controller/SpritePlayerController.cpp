@@ -29,6 +29,8 @@ void ASpritePlayerController::BeginPlay()
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	Subsystem->AddMappingContext(PlayerContext, 0);
 
+	bShowMouseCursor = true;
+
 
 }
 

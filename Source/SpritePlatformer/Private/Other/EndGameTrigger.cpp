@@ -43,7 +43,7 @@ void AEndGameTrigger::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlapp
 			FTimerManager& TimerManager = GetWorldTimerManager();
 			FTimerHandle TimerHandle;
 
-			TimerManager.SetTimer(TimerHandle, this, &AEndGameTrigger::ToGameOverMenu, 2.0f, false);
+			TimerManager.SetTimer(TimerHandle, this, &AEndGameTrigger::ToGameOverMenu, 3.0f, false);
 			
 			ToGameOverMenu();
 		}
@@ -56,7 +56,7 @@ void AEndGameTrigger::ToGameOverMenu()
 
 	if (IsValid(GameMode) && GameMode->GetPointsPickupCount() == 0)
 	{
-		UGameplayStatics::OpenLevel(this, "Game_Over_Win_Screen");
+		UGameplayStatics::OpenLevel(this, "GameOver_Screen");
 	}
 
 }
