@@ -93,7 +93,15 @@ Code refactoring.
 
 ////////////////////////////////////////
 
+02/12/2024
 
+UI:
+Game Information widget. Conent and funcionality-
+Pause Game widget. Content and functionality.
+
+Other:
+Finishin touches to game.
+Code and Blueprint refactoring.
 
 
 
