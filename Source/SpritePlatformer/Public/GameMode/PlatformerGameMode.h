@@ -35,10 +35,6 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	//display start of game
-	UFUNCTION(BlueprintImplementableEvent)
-	void StartGame();
-
 private:
 
 	APlayerPaperCharacter* PlayerChar;

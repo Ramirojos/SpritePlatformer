@@ -7,6 +7,7 @@
 #include "EndGameTrigger.generated.h"
 
 class UBoxComponent;
+class USoundBase;
 
 UCLASS()
 class SPRITEPLATFORMER_API AEndGameTrigger : public AActor
@@ -16,8 +17,6 @@ class SPRITEPLATFORMER_API AEndGameTrigger : public AActor
 public:	
 
 	AEndGameTrigger();
-
-	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	virtual void OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
@@ -33,4 +32,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UBoxComponent* TriggerArea;
 
+private:
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* GameOverSound;
 };

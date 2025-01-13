@@ -9,13 +9,10 @@
 
 
 
+//Handles functionality when the playable levels start.
 void APlatformerGameMode::HandleGameStart()
 {
 	SpriteController = Cast<ASpritePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-
-	//Event to be called from blueprint,
-	//will be used to create and manipulate Start Game widget
-	StartGame();
 
 	//Disable the input until the timer runs out
 	if (IsValid(SpriteController)) {
@@ -38,7 +35,7 @@ void APlatformerGameMode::HandleGameStart()
 	}
 }
 
-//What happens when the Player Actor dies, could be a player (or an enemy in the future)
+//What happens when the Player Actor dies
 void APlatformerGameMode::ActorDied(AActor* DeadActor)
 {
 	if (DeadActor == PlayerChar) {
@@ -49,11 +46,15 @@ void APlatformerGameMode::ActorDied(AActor* DeadActor)
 void APlatformerGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Sets the ammount of pickups on level start, used in widgets
 	SetinitPickups(GetPointsPickupCount());
 
 	HandleGameStart();
 }
 
+
+//Returns the current ammount of Points Pickup actors present in the level
 int APlatformerGameMode::GetPointsPickupCount()
 {
 	//StaticClass returns the type of UObject instance using the instance->GetClass() function.

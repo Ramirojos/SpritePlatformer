@@ -12,8 +12,10 @@ ASpritePlayerController::ASpritePlayerController()
 }
 
 
+//Enables/disables input, called in GameMode
 void ASpritePlayerController::SetPlayerEnabledState(bool bPlayerEnabled)
 {
+	
 	if (bPlayerEnabled) {
 		GetPawn()->EnableInput(this);
 	}
@@ -25,26 +27,4 @@ void ASpritePlayerController::SetPlayerEnabledState(bool bPlayerEnabled)
 void ASpritePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	Subsystem->AddMappingContext(PlayerContext, 0);
-
-	bShowMouseCursor = true;
-
-
-}
-
-void ASpritePlayerController::SetupInputComponent()
-{
-	Super::SetupInputComponent();
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASpritePlayerController::Move);
-	
-	
-	// Jumping, already implemented in ACharacter
-}
-void ASpritePlayerController::Move(const FInputActionValue& InputACtionValue)
-{
-
 }

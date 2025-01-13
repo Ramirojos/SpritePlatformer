@@ -27,22 +27,17 @@ void ASpikeDamageArea::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlap
 	}
 }
 
-// Called when the game starts or when spawned
 void ASpikeDamageArea::BeginPlay()
 {
 	Super::BeginPlay();
 
 	DamageArea->SetGenerateOverlapEvents(true);
+
+	//Delegate for damage functionality
 	DamageArea->OnComponentBeginOverlap.AddUniqueDynamic(this, &ASpikeDamageArea::OnBeginOverlapComponentEvent);
 	
 }
 
-// Called every frame
-void ASpikeDamageArea::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 
 

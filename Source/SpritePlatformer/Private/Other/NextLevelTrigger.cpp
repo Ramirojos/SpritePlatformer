@@ -2,36 +2,34 @@
 
 
 #include "Other/NextLevelTrigger.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "Entities/PlayerCharacter/PlayerPaperCharacter.h"
 #include "GameMode/PlatformerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
+
 ANextLevelTrigger::ANextLevelTrigger()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	TriggerArea = CreateDefaultSubobject<UBoxComponent>(TEXT("Triger Area"));
-	levels = { "Level_1", "level_2" };
+	Levels = { "Level1", "Level2", "Level3"};
+
+	NextLevelSound = CreateDefaultSubobject<USoundBase>(TEXT("Next Level Sound"));
 }
 
-// Called when the game starts or when spawned
+
 void ANextLevelTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 	TriggerArea->SetGenerateOverlapEvents(true);
+	
+	//Delegate for Level transition functionality
 	TriggerArea->OnComponentBeginOverlap.AddUniqueDynamic(this, &ANextLevelTrigger::OnBeginOverlapComponentEvent);
 }
 
-// Called every frame
-void ANextLevelTrigger::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
+//When overlapped and point pickups on level reaches 0 then trigger the level transition
 void ANextLevelTrigger::OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep, const FHitResult& SweepResult)
 {
 	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
@@ -40,24 +38,29 @@ void ANextLevelTrigger::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overla
 	if (IsValid(PlayerChar) && IsValid(GameMode)) {
 		if (GameMode->GetPointsPickupCount() == 0) {
 			
+			UGameplayStatics::PlaySound2D(this, NextLevelSound, 1, 1, 0, NULL, this ,true);
+
+			//timer to transition to next level
 			FTimerManager& TimerManager = GetWorldTimerManager();
 			FTimerHandle TimerHandle;
 
-			TimerManager.SetTimer(TimerHandle, this, &ANextLevelTrigger::SwitchLevel, 1.0f , false);
+			TimerManager.SetTimer(TimerHandle, this, &ANextLevelTrigger::SwitchLevel, 1.75, false);
 		}
 	}
 }
 
+//Change levels when reaching the collision box
 void ANextLevelTrigger::SwitchLevel()
 {
+	//get level name and set it up to transition
 	FString current = GetWorld()->GetMapName();
 	current.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
 
-	for (int i = 0; i < levels.Num(); i++) {
+	for (int i = 0; i < Levels.Num(); i++) {
 
 		//At wich index the name matches the level name 
-		if (current == levels[i]) {
-			UGameplayStatics::OpenLevel(GetWorld(), FName(levels[i + 1]));
+		if (current == Levels[i]) {
+			UGameplayStatics::OpenLevel(GetWorld(), FName(Levels[i + 1]));
 		}
 	}
 }

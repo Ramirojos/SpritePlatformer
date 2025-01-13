@@ -8,6 +8,7 @@
 
 class UCapsuleComponent;
 class UPaperFlipbookComponent;
+class USoundBase;
 
 UCLASS()
 class SPRITEPLATFORMER_API ASpritePickup : public AActor
@@ -17,14 +18,10 @@ class SPRITEPLATFORMER_API ASpritePickup : public AActor
 public:	
 	ASpritePickup();
 
-	virtual void Tick(float DeltaTime) override;
-	
 	UFUNCTION()
 	virtual void OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 		const FHitResult& SweepResult);
-
-
 
 protected:
 	virtual void BeginPlay() override;	

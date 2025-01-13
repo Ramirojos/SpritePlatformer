@@ -13,7 +13,7 @@
 #include "GameMode/PlatformerGameMode.h"
 #include "Items/HealthPickup.h"
 #include "Items/PointsPickup.h"
-#include "Items/SpritePickup.h"
+//#include "Items/SpritePickup.h"
 #include "InputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
 #include "PaperFlipbook.h"
@@ -60,9 +60,9 @@ APlayerPaperCharacter::APlayerPaperCharacter():
 	GetCharacterMovement()->AirControl = 1.0f;
 	GetCharacterMovement()->AirControlBoostMultiplier = 100.f;
 	GetCharacterMovement()->AirControlBoostVelocityThreshold = 100.0;
-	
 	JumpMaxCount = 2;
 
+	//sound queue
 	static ConstructorHelpers::FObjectFinder<USoundBase>DamageSoundObject(TEXT("/Script/Engine.SoundWave'/Game/Audio/sounds/hurt.hurt'"));
 	if (IsValid(DamageSoundObject.Object))
 	{
@@ -77,14 +77,14 @@ void APlayerPaperCharacter::BeginPlay()
 	GetCapsuleComponent()->SetGenerateOverlapEvents(true);
 
 	PlayerController = Cast<ASpritePlayerController>(GetController());
+
 	if (IsValid(PlayerController)) {
-		
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 		if (Subsystem) {
 			Subsystem->AddMappingContext(PlayerMappingContext, 0);
 		}
 	}
-
+	
 	PlatformerGameMode = Cast<APlatformerGameMode> (UGameplayStatics::GetGameMode(this));
 }
 
@@ -92,9 +92,12 @@ void APlayerPaperCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	UpdatePlayer();
+
+	PlayerController->EnableInput(GetPlayerController());
+	
 }
 
-
+//What happens when the player reaches 0 lives. 
 void APlayerPaperCharacter::HandleDestruction() {
 	
 	GetCharacterMovement()->DisableMovement();
@@ -102,7 +105,7 @@ void APlayerPaperCharacter::HandleDestruction() {
 	SetActorTickEnabled(false);
 }
 
-//Seting up character movement on a 2D plane
+//Seting up character movement on a 2D plane.
 void APlayerPaperCharacter::Move(const FInputActionValue& Value)
 {
 	//Where is forward
@@ -127,8 +130,6 @@ void APlayerPaperCharacter::UpdatePlayer()
 
 	//Set the direction of the controller
 	const FVector PlayerVelocity = GetVelocity();
-
-	//units on X axis
 	float TravelDirection = PlayerVelocity.X;
 
 	//We need to check if player is in the air
@@ -136,6 +137,7 @@ void APlayerPaperCharacter::UpdatePlayer()
 		if (TravelDirection < 0.0f)
 		{
 			Controller->SetControlRotation(FRotator(0.0, 180.0f, 0.0f));
+			
 		}
 		else if(TravelDirection > 0.0f)
 		{
@@ -157,7 +159,6 @@ void APlayerPaperCharacter::UpdateAnimation()
 				//Then check for falling speed and set flipbook accordingly
 				UPaperFlipbook* DesiredAnimation = (PlayerVelocity.Z < 0.0f) ? JumpFallAnimation : JumpRiseAnimation;
 				
-
 				GetSprite()->SetFlipbook(DesiredAnimation);
 			}
 			else
@@ -169,7 +170,7 @@ void APlayerPaperCharacter::UpdateAnimation()
 		}
 }
 
-//Action binding to player input, used the new enhanced input system
+//Action binding to player input
 void APlayerPaperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -201,11 +202,6 @@ void APlayerPaperCharacter::AddPoints(float PointsToAdd)
 float APlayerPaperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Health= FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
-		
-	GetSprite()->SetFlipbook(TakeDamageAnimation);
-	GetSprite()->PlayFromStart();
-
-	//UGameplayStatics::PlaySound2D(this, DamageSound);
 	UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
 	if (!IsAlive(Health)) {
 
@@ -222,6 +218,7 @@ float APlayerPaperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& 
 	return DamageAmount;
 }
 
+//check for alive condition
 bool APlayerPaperCharacter::IsAlive(float CurrentHealth)
 {
 	if (CurrentHealth <= 0) {

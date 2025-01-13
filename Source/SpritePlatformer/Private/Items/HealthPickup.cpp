@@ -7,8 +7,9 @@
 
 AHealthPickup::AHealthPickup() :
 	HealthValue{1} {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	//Assign sound file to PickupSound Variable
 	static ConstructorHelpers::FObjectFinder<USoundBase>PickupSoundObject(TEXT("/Script/Engine.SoundWave'/Game/Audio/sounds/Health.Health'"));
 	if (IsValid(PickupSoundObject.Object))
 	{
@@ -16,15 +17,14 @@ AHealthPickup::AHealthPickup() :
 	}
 }
 
+
+//On overlap chack if player character is valid and then adds one to the current player's healt value, plays a sound queue and destroys the pickup.
 void AHealthPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep, const FHitResult& SweepResult)
 {
 	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
 		
-	//check if the cast is successful, if it is, then call SetHealth from 
-	//PlayerCharacter	
 	if (IsValid(PlayerChar)) {
-		
 		UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
 		PlayerChar->AddHealth(HealthValue);
 		Destroy();

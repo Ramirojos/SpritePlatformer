@@ -8,8 +8,9 @@
 
 APointsPickup::APointsPickup() :
 	PointsValue{10} {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	//Assign sound file to PickupSound Variable
 	static ConstructorHelpers::FObjectFinder<USoundBase>PickupSoundObject(TEXT("/Script/Engine.SoundWave'/Game/Audio/sounds/coin.coin'"));
 	if (IsValid(PickupSoundObject.Object))
 	{
@@ -17,16 +18,14 @@ APointsPickup::APointsPickup() :
 	}
 }
 
+//When overlapping with the Player Character a sound triggers, a point is added to the point's total and a sound queue is played
 void APointsPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep, const FHitResult& SweepResult)
 {
 	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
 	APlatformerGameMode* GameMode = (APlatformerGameMode*)GetWorld()->GetAuthGameMode();
 
-	
-
 	if (IsValid(PlayerChar)) {
-		
 		PlayerChar->AddPoints(PointsValue);
 		Destroy();
 		UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
@@ -36,7 +35,3 @@ void APointsPickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlapped
 		}
 	}
 }
-	
-
-
-

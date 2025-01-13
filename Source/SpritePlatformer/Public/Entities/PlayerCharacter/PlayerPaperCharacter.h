@@ -5,15 +5,8 @@
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
 #include "InputActionValue.h"
-//#include "Interfaces/PickupInterface.h"
 #include "PlayerPaperCharacter.generated.h"
 
-
-
-////*//////continue with implementatioon of interfaces.
-//the player inherits from the itnerface
-//the item includes from cpp the interfacce
-//
 
 class ASpritePickup;
 class APlatformerGameMode;
@@ -40,9 +33,8 @@ public:
 	void HandleDestruction();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	
-	//Health and points setup
+		
+	/******* Healh and Points related ******/
 
 	UFUNCTION(BlueprintCallable)
 	float GetHealth() const { return Health; };
@@ -77,8 +69,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	/******* Movement related properties ******/
-	UPROPERTY(BlueprintReadWrite)
-	float MaxHealth;
 
 	//Mapping Context
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = input)
@@ -116,15 +106,16 @@ protected:
 
 	///*************///
 
-	//Functions called for Inputs
 	void Move(const FInputActionValue& Value);
 	
-	//Update player position
 	void UpdatePlayer();
 
-	//Update the animation when input changes
 	void UpdateAnimation();
 
+	///*************///
+
+	UPROPERTY(BlueprintReadWrite)
+	float MaxHealth;
 private:
 
 	UPROPERTY(VisibleAnywhere)
@@ -146,5 +137,4 @@ private:
 
 	APlatformerGameMode* PlatformerGameMode;
 
-	APlayerPaperCharacter* PlayerChar;
 };

@@ -14,7 +14,7 @@ class SPRITEPLATFORMER_API ASpikeDamageArea : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+	
 	ASpikeDamageArea();
 
 	UFUNCTION()
@@ -22,11 +22,8 @@ public:
 		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 		const FHitResult& SweepResult);
 	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
 private:

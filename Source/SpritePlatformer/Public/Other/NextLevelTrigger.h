@@ -7,6 +7,7 @@
 #include "NextLevelTrigger.generated.h"
 
 class UBoxComponent;
+class USoudBase;
 
 UCLASS()
 class SPRITEPLATFORMER_API ANextLevelTrigger : public AActor
@@ -14,9 +15,8 @@ class SPRITEPLATFORMER_API ANextLevelTrigger : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	ANextLevelTrigger();
-	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	virtual void OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,
@@ -26,14 +26,17 @@ public:
 	void SwitchLevel();
 
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;	
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UBoxComponent* TriggerArea;
 
 private:
-	TArray<FString> levels;
+	TArray<FString> Levels;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* NextLevelSound;
 
 
 };

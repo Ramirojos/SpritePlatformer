@@ -1,15 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Items/SpritePickup.h"
-//#include "Interfaces/PickupInterface.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "PaperFlipbookComponent.h"
 
-// Sets default values
 ASpritePickup::ASpritePickup()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	//Set the base properties of the capsule and prepping for 
 	//Interaction with Player Caharacter
@@ -29,6 +27,8 @@ void ASpritePickup::BeginPlay()
 	Super::BeginPlay();
 
 	PickupCapsule->SetGenerateOverlapEvents(true);
+
+	//Delegate for Pickup actor overlapping fuctionality
 	PickupCapsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &ASpritePickup::OnBeginOverlapComponentEvent);
 }
 
@@ -37,10 +37,4 @@ void ASpritePickup::OnBeginOverlapComponentEvent(UPrimitiveComponent* Overlapped
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep,
 	const FHitResult& SweepResult)
 {}
-
-void ASpritePickup::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 

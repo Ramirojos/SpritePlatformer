@@ -6,9 +6,6 @@
 #include "Items/SpritePickup.h"
 #include "PointsPickup.generated.h"
 
-class UCapsuleComponent;
-
-
 UCLASS()
 class SPRITEPLATFORMER_API APointsPickup : public ASpritePickup
 {
@@ -16,9 +13,7 @@ class SPRITEPLATFORMER_API APointsPickup : public ASpritePickup
 public:
 
 	APointsPickup();
-	//inline int32 GetPoints() const{ return PointsValue; }
 	
-
 protected:
 
 	virtual void OnBeginOverlapComponentEvent(UPrimitiveComponent* OverlappedComponent,

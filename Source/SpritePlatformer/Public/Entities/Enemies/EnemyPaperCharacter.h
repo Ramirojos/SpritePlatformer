@@ -12,7 +12,6 @@
  */
 class UBoxComponent;
 class UPaperFlipbook;
-class UStaticMeshComponent;
 
 UCLASS()
 class SPRITEPLATFORMER_API AEnemyPaperCharacter : public APaperCharacter
@@ -45,9 +44,14 @@ protected:
 
 	virtual void BeginPlay();
 
+	///*************///
+	
+	//Related to the movement sprites
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation)
 	UPaperFlipbook* RuningAnimation;
 	
+	///*************///
+	//different overlapping boxes
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UBoxComponent* FrontCollisionBox;
 
@@ -57,11 +61,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UBoxComponent* DamageBox;
 
+	///*************///
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Damage value")
 	float DamageValue;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageType> DamageType;
-
-private:
 };

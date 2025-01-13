@@ -12,22 +12,19 @@
 #include "PaperFlipbookComponent.h"
 #include "Entities/PlayerCharacter/PlayerPaperCharacter.h"
 
-
-
-
 AEnemyPaperCharacter::AEnemyPaperCharacter():
 	DamageValue{1}
 {
 	GetCapsuleComponent()->SetCapsuleRadius(12.0);
 	GetCapsuleComponent()->SetCapsuleHalfHeight(12.0f);
 	
-	//Boxes dimentions edited on blueprint
 	
-	//box that checks for a wall, will change character forward direction when so
+	//Box that checks for a wall, will change character forward direction when so
 	FrontCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("WallDetection"));
 	FrontCollisionBox->SetupAttachment(RootComponent);
 	FrontCollisionBox->SetBoxExtent(FVector(4.0f, 5.0f, 6.0f));
 
+	//Box that checks for the end of the platform, will change character forward direction when so
 	BottomCollisonBox=CreateDefaultSubobject<UBoxComponent>(TEXT("FloorDetection"));
 	BottomCollisonBox->SetupAttachment(RootComponent);
 
@@ -74,12 +71,13 @@ void AEnemyPaperCharacter::WallDetectionEvent(UPrimitiveComponent* OverlappedCom
 	TurnCharacter();
 }
 
-//when we end overlapping with floor, turn around
+//When we end overlapping with floor, turn around
 void AEnemyPaperCharacter::FloorDetectionEvent(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	TurnCharacter();
 }
 
+//When overlapping with Character Actor
 void AEnemyPaperCharacter::OnBeginColisionDamageEvent(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSwep, const FHitResult& SweepResult)
 {
 	AController* EnemyController = GetInstigator()->GetController();
@@ -90,7 +88,6 @@ void AEnemyPaperCharacter::OnBeginColisionDamageEvent(UPrimitiveComponent* Overl
 	}	
 }
 
-//set the actor rotation to 180° of the original
 void AEnemyPaperCharacter::TurnCharacter()
 {	
 	FRotator Direction = GetActorRotation().Add(0.0f, 180.0f, 0.0f);
