@@ -93,7 +93,7 @@ Code refactoring.
 
 ////////////////////////////////////////
 
-02/12/2024
+12/02/2024
 
 UI:
 Game Information widget. Conent and funcionality-
@@ -103,6 +103,13 @@ Other:
 Finishin touches to game.
 Code and Blueprint refactoring.
 
+////////////////////////////////////////
 
+01/13/2025
 
+UI:
+Finished Quit and Pause widgets.
 
+Other:
+Code and Blueprint Refactoring.
+Game Done.
