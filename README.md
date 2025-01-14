@@ -113,3 +113,9 @@ Finished Quit and Pause widgets.
 Other:
 Code and Blueprint Refactoring.
 Game Done.
+
+////////////////////////////////////////
+
+01/14/2025
+
+Patch: Fixed bug where multiple damage events where being triggered in one frame, killing the player instantly.
