@@ -56,6 +56,13 @@ void AEnemyPaperCharacter::BeginPlay()
 
 }
 
+void AEnemyPaperCharacter::ResetDamageBox()
+{
+	if (bDamageTriggered == true) {
+		bDamageTriggered = false;
+	}
+}
+
 void AEnemyPaperCharacter::Tick(float DeltaTime)
 {
 	//Character is always moving Forward
@@ -83,9 +90,13 @@ void AEnemyPaperCharacter::OnBeginColisionDamageEvent(UPrimitiveComponent* Overl
 	AController* EnemyController = GetInstigator()->GetController();
 	APlayerPaperCharacter* PlayerChar = Cast<APlayerPaperCharacter>(OtherActor);
 
-	if (IsValid(PlayerChar)) {
+	
+	if (IsValid(PlayerChar) && bDamageTriggered == false) {
 		UGameplayStatics::ApplyDamage(OtherActor, DamageValue, EnemyController, this, DamageType);
+		bDamageTriggered = true;
 	}	
+	FTimerHandle DamageBoxhandle;
+	GetWorldTimerManager().SetTimer(DamageBoxhandle, this, &AEnemyPaperCharacter::ResetDamageBox, 0.5f, false);
 }
 
 void AEnemyPaperCharacter::TurnCharacter()

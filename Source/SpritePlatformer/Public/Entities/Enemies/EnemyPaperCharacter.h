@@ -68,4 +68,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageType> DamageType;
+
+	///*************///
+
+	UPROPERTY()
+	bool bDamageTriggered = false;
+
+	void ResetDamageBox();
 };

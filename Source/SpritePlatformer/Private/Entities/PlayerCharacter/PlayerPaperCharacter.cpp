@@ -213,6 +213,7 @@ float APlayerPaperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& 
 
 		PlatformerGameMode->ActorDied(UGameplayStatics::GetPlayerPawn(this, 0));
 		UGameplayStatics::OpenLevel(this, "GameOver_Screen");
+
 	}
 
 	return DamageAmount;
