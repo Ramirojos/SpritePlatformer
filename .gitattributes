@@ -1,2 +1,2 @@
-*.cpp linguist-vendored=C++
+*html linguist-vendored=C++
 *.h linguist-language=C++
